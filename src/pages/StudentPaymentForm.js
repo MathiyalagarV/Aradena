@@ -160,15 +160,18 @@ const StudentPaymentSystem = () => {
             // Capture the PDF - use html2canvas to get the DOM and then create the PDF
             const element = invoiceRef.current;
             const canvas = await html2canvas(element, {
-              scale: 4,
-               backgroundColor: '#fff',
-            });
+                scale: 2,  // Try different scale values (2-4)
+                backgroundColor: '#fff',
+                useCORS: true,  // If image loading issues
+                logging: false  // Disable logging
+              });
             
             const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const width = pdf.internal.pageSize.getWidth();
-            const height = pdf.internal.pageSize.getHeight();
-            pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+
+            const pdf = new jsPDF('p', 'mm', 'a3');
+            const imgWidth = pdf.internal.pageSize.getWidth();
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+            pdf.addImage(imgData, 'PNG', 1, 1, imgWidth, imgHeight, '', 'FAST');
 
             // Create filename with student name and date
             const currentDate = formatDate(invoiceData.date);
@@ -385,10 +388,11 @@ const StudentPaymentSystem = () => {
 
             <div style={styles.warningNote}>
                 <p>Note: Kindly pay your fee before 10th of every month.</p>
+                <p style={styles.thankYouMessage} >Thank You For Your Payment!</p>
             </div>
 
             <div style={styles.thankYouMessage}>
-                <p>Thank You For Your Payment!</p>
+                
             </div>
         </div>
 
@@ -521,10 +525,10 @@ const styles = {
     },
 
     schoolSubtitle: {
-        fontSize: '12px',
+        fontSize: '10px',
         color: 'white',
         margin: 0,
-        fontWeight: '400',
+        fontWeight: '600',
         letterSpacing: '1px',
         fontFamily: 'Arial, sans-serif',
         textTransform: 'capitalize',
@@ -537,10 +541,10 @@ const styles = {
     },
 
      schoolhSubtitle: {
-        fontSize: '12px',
+        fontSize: '10px',
         color: '#1F2937',
         margin: 0,
-        fontWeight: '400',
+        fontWeight: '600',
         letterSpacing: '1px',
         fontFamily: 'Arial, sans-serif',
         textTransform: 'capitalize',
@@ -864,31 +868,32 @@ const styles = {
         border: '1px solid #E5E7EB',
         padding: '12px',
         borderRadius: '6px',
+         marginTop: '-28px'
    
     },
     
     warningNote: {
         textAlign: 'center',
         color: '#FF0000',
-        fontSize: '12px',
+        fontSize: '11px',
        
         padding: '15px 0',
         fontWeight: '800',
-        marginTop: '-25px'
+        marginTop: '-35px'
     },
     
     thankYouMessage: {
         textAlign: 'center',
-        marginTop: '20px',
-        padding: '15px 0',
-        borderTop: '1px solid #E5E7EB',
+        marginTop: '22px',
+        // padding: '15px 0',
+        // borderTop: '1px solid #E5E7EB',
         color: '#460c5f',
-        fontSize: '18px',
-        fontWeight: 'bold',
-        '@media (max-width: 768px)': {
-            fontSize: '16px',
-            padding: '12px 0'
-        }
+        fontSize: '16px',
+        // fontWeight: 'bold',
+        // '@media (max-width: 768px)': {
+        //     fontSize: '16px',
+        //     padding: '12px 0'
+        // }
     },
     
     signatureText: {
